@@ -1,0 +1,51 @@
+﻿using _Project.Develop.Runtime.Meta.Features.Stats;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
+using Assets._Project.Develop.Runtime.Utilities.StateMachineCore;
+using UnityEngine;
+
+namespace Assets._Project.Develop.Runtime.Gameplay.States
+{
+    public class DefeatState : EndGameState, IUpdatableState
+    {
+        private readonly SceneSwitcherService _sceneSwitcherService;
+        private readonly ICoroutinesPerformer _coroutinesPerformer;
+        private readonly PlayerDataProvider   _playerDataProvider;
+        private readonly StatsService _statsService;
+
+        public DefeatState(
+            IInputService inputService,
+            SceneSwitcherService sceneSwitcherService,
+            ICoroutinesPerformer coroutinesPerformer,
+            PlayerDataProvider playerDataProvider,
+            StatsService statsService
+        ) : base(inputService)
+        {
+            _sceneSwitcherService = sceneSwitcherService;
+            _coroutinesPerformer  = coroutinesPerformer;
+            _playerDataProvider   = playerDataProvider;
+            _statsService    = statsService;
+        }
+
+        public override void Enter()
+        {
+            base.Enter();
+
+            _statsService.IncrementLosses();
+
+            _coroutinesPerformer.StartCoroutine(_playerDataProvider.SaveAsync());
+
+            Debug.Log("ПОРАЖЕНИЕ!");
+        }
+
+        public void Update(float deltaTime)
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                _coroutinesPerformer.StartCoroutine(_sceneSwitcherService.ProcessSwitchTo(Scenes.MainMenu));
+            }
+        }
+    }
+}
