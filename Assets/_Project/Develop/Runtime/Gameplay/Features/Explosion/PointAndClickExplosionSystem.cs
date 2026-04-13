@@ -40,7 +40,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Explosion
 				Vector3 groundedMousePosition = new Vector3(mousePosition.x, 0, mousePosition.z);
 
 				Collider[] hitColliders = Physics.OverlapSphere(groundedMousePosition, _blastRadius.Value, LayerMask.GetMask("Characters"));
-q
+
 				foreach (Collider hitCollider in hitColliders)
 				{
 					Entity entity = _collidersRegistryService.GetBy(hitCollider);
