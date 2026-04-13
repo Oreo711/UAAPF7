@@ -42,7 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity
                 .AddMaxHealth(new ReactiveVariable<float>(config.Health))
-                .AddCurrentHealth()
+                .AddCurrentHealth(new ReactiveVariable<float>(config.Health))
                 .AddExplosionDamage(new ReactiveVariable<float>(config.Damage))
                 .AddBlastRadius(new ReactiveVariable<float>(config.Radius))
                 .AddTakeDamageRequest()
@@ -111,14 +111,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             entity
                 .AddMoveDirection()
                 .AddMoveSpeed(new ReactiveVariable<float>(config.Speed))
+                .AddIsMoving()
                 .AddRotationDirection()
                 .AddRotationSpeed(new ReactiveVariable<float>(900))
-                .AddCurrentHealth()
+                .AddCurrentHealth(new ReactiveVariable<float>(config.Health))
                 .AddMaxHealth(new ReactiveVariable<float>(config.Health))
                 .AddIsDead()
+                .AddDisableCollidersOnDeath()
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
-                .AddTeam(new ReactiveVariable<Teams>(Teams.Enemies))
                 .AddExplosionDamage(new ReactiveVariable<float>(config.Damage))
                 .AddBlastRadius(new ReactiveVariable<float>(config.Range));
 

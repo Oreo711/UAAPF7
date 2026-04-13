@@ -15,4 +15,4 @@ MonoBehaviour:
   _damage: 50
   _range: 2
   _health: 100
-  _speed: 5
+  _speed: 1
