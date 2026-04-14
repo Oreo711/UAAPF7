@@ -7,31 +7,79 @@ using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using Assets._Project.Develop.Runtime.Utilities.Timer;
 using System;
 using System.Collections.Generic;
+using _Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
+using TMPro;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 {
     public class BrainsFactory
     {
-        private readonly DIContainer _container;
-        private readonly TimerServiceFactory _timerServiceFactory;
-        private readonly AIBrainsContext _brainsContext;
-        private readonly IInputService _inputService;
-        private readonly EntitiesLifeContext _entitiesLifeContext;
+        private readonly DIContainer            _container;
+        private readonly TimerServiceFactory    _timerServiceFactory;
+        private readonly AIBrainsContext        _brainsContext;
+        private readonly IInputService          _inputService;
+        private readonly EntitiesLifeContext    _entitiesLifeContext;
+        private readonly StageProviderService   _stageProviderService;
+        private readonly WalletService          _walletService;
+        private readonly PlayerDataProvider     _playerDataProvider;
+        private readonly ConfigsProviderService _configsProviderService;
+        private readonly ICoroutinesPerformer   _coroutinesPerformer;
 
         public BrainsFactory(DIContainer container)
         {
-            _container = container;
-            _timerServiceFactory = _container.Resolve<TimerServiceFactory>();
-            _brainsContext = _container.Resolve<AIBrainsContext>();
-            _inputService = _container.Resolve<IInputService>();
-            _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
+            _container              = container;
+            _timerServiceFactory    = _container.Resolve<TimerServiceFactory>();
+            _brainsContext          = _container.Resolve<AIBrainsContext>();
+            _inputService           = _container.Resolve<IInputService>();
+            _entitiesLifeContext    = _container.Resolve<EntitiesLifeContext>();
+            _stageProviderService   = _container.Resolve<StageProviderService>();
+            _walletService          = _container.Resolve<WalletService>();
+            _playerDataProvider     = _container.Resolve<PlayerDataProvider>();
+            _configsProviderService = _container.Resolve<ConfigsProviderService>();
+            _coroutinesPerformer    = _container.Resolve<ICoroutinesPerformer>();
+        }
+
+        public StateMachineBrain CreateTowerBrain (Entity entity)
+        {
+            AIStateMachine stateMachine = CreateTowerStateMachine(entity);
+            StateMachineBrain brain = new StateMachineBrain(stateMachine);
+
+            _brainsContext.SetFor(entity, brain);
+
+            return brain;
         }
 
         private AIStateMachine CreateTowerStateMachine (Entity entity)
         {
-            return null;
+            PointAndClickExplosionState explosionState  = new PointAndClickExplosionState(entity, _inputService);
+            MineDeployState mineDeployState =
+                new MineDeployState(
+                entity,
+                _inputService,
+                _walletService,
+                _playerDataProvider,
+                _configsProviderService.GetConfig<MineConfig>().Cost,
+                _coroutinesPerformer);
+
+            AIStateMachine stateMachine = new AIStateMachine();
+
+            stateMachine.AddState(explosionState);
+            stateMachine.AddState(mineDeployState);
+
+            ICondition explosionToMineDeploy = new FuncCondition(() => _stageProviderService.CurrentStageResult.Value == StageResults.Completed);
+            ICondition mineDeployToExplosion = new FuncCondition(() => _stageProviderService.CurrentStageResult.Value == StageResults.Uncompleted);
+
+            stateMachine.AddTransition(explosionState, mineDeployState, explosionToMineDeploy);
+            stateMachine.AddTransition(mineDeployState, explosionState, mineDeployToExplosion);
+
+            return stateMachine;
         }
 
         public StateMachineBrain CreateMainHeroBrain(Entity entity, ITargetSelector targetSelector)
@@ -82,11 +130,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 
         private AIStateMachine CreateBomberStateMachine (Entity entity)
         {
-            ChaseHeroState chaseHeroState = new ChaseHeroState(entity, _container.Resolve<MainHeroHolderService>());
+            ChaseHeroState        chaseHeroState    = new ChaseHeroState(entity, _container.Resolve<MainHeroHolderService>());
+            SelfDestructState     selfDestructState = new SelfDestructState(entity);
+            MainHeroHolderService heroHolderService = _container.Resolve<MainHeroHolderService>();
 
             AIStateMachine stateMachine = new AIStateMachine();
 
             stateMachine.AddState(chaseHeroState);
+            stateMachine.AddState(selfDestructState);
+
+            ICondition mustSelfDestruct = new FuncCondition(() =>
+                (heroHolderService.MainHero.Transform.position - entity.Transform.position).magnitude <= entity.BlastRadius.Value);
+
+            stateMachine.AddTransition(chaseHeroState, selfDestructState, mustSelfDestruct);
 
             return stateMachine;
         }

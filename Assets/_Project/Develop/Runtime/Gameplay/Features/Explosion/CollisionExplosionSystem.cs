@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Explosion
 {
-	public class StationaryExplosionSystem : IInitializableSystem, IUpdatableSystem
+	public class CollisionExplosionSystem : IInitializableSystem, IUpdatableSystem
 	{
 		private ReactiveVariable<float> _explosionDamage;
 		private ReactiveVariable<float> _blastRadius;
@@ -17,9 +18,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Explosion
 
 		private readonly CollidersRegistryService _collidersRegistryService;
 
-		private Collider[] _collidersWithinRadius;
-
-		public StationaryExplosionSystem (CollidersRegistryService collidersRegistryService)
+		public CollisionExplosionSystem (CollidersRegistryService collidersRegistryService)
 		{
 			_collidersRegistryService = collidersRegistryService;
 		}
@@ -36,15 +35,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Explosion
 
 		public void OnUpdate (float deltaTime)
 		{
-			Physics.OverlapSphereNonAlloc(
+			Collider[] collidersWithinRadius = Physics.OverlapSphere(
 				_transform.position,
 				_blastRadius.Value,
-				_collidersWithinRadius,
 				LayerMask.GetMask("Characters"));
 
-			if (_collidersWithinRadius.Length > 0)
+			if (collidersWithinRadius.Length > 0)
 			{
-				foreach (Collider hitCollider in _collidersWithinRadius)
+				foreach (Collider hitCollider in collidersWithinRadius)
 				{
 					Entity entity = _collidersRegistryService.GetBy(hitCollider);
 

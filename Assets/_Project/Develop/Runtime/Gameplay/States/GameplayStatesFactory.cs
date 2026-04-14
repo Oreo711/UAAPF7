@@ -14,6 +14,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using _Project.Develop.Runtime.Meta.Features.Stats;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 
 
 namespace Assets._Project.Develop.Runtime.Gameplay.States
@@ -46,7 +49,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 inputArgs,
                 _container.Resolve<PlayerDataProvider>(),
                 _container.Resolve<SceneSwitcherService>(),
-                _container.Resolve<ICoroutinesPerformer>());
+                _container.Resolve<ICoroutinesPerformer>(),
+                _container.Resolve<WalletService>(),
+                _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>());
         }
 
         public DefeatState CreateDefeatState()

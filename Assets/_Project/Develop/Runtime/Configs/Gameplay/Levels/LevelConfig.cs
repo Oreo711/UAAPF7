@@ -8,7 +8,9 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Levels
     public class LevelConfig : ScriptableObject
     {
         [SerializeField] private List<StageConfig> _stageConfigs;
+        [SerializeField] private int _winReward;
 
         public IReadOnlyList<StageConfig> StageConfigs => _stageConfigs;
+        public int WinReward => _winReward;
     }
 }

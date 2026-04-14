@@ -1,7 +1,10 @@
 ﻿using _Project.Develop.Runtime.Meta.Features.Stats;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
@@ -18,6 +21,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly SceneSwitcherService     _sceneSwitcherService;
         private readonly ICoroutinesPerformer     _coroutinesPerformer;
         private readonly StatsService             _statsService;
+        private readonly WalletService            _walletService;
+        private readonly LevelsListConfig         _levelsListConfig;
 
         public WinState(
             IInputService inputService,
@@ -26,7 +31,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             GameplayInputArgs gameplayInputArgs,
             PlayerDataProvider playerDataProvider,
             SceneSwitcherService sceneSwitcherService,
-            ICoroutinesPerformer coroutinesPerformer
+            ICoroutinesPerformer coroutinesPerformer,
+            WalletService walletService,
+            LevelsListConfig levelsListConfig
         ) : base(inputService)
         {
             _levelsProgressionService = levelsProgressionService;
@@ -35,6 +42,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _playerDataProvider       = playerDataProvider;
             _sceneSwitcherService     = sceneSwitcherService;
             _coroutinesPerformer      = coroutinesPerformer;
+            _walletService            = walletService;
+            _levelsListConfig         = levelsListConfig;
         }
 
         public override void Enter()
@@ -45,6 +54,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             _levelsProgressionService.AddLevelToCompleted(_gameplayInputArgs.LevelNumber);
             _statsService.IncrementWins();
+
+            int goldReward = _levelsListConfig.GetBy(_gameplayInputArgs.LevelNumber).WinReward;
+
+            _walletService.Add(CurrencyTypes.Gold, goldReward);
 
             _coroutinesPerformer.StartCoroutine(_playerDataProvider.SaveAsync());
         }

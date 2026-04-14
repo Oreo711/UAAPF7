@@ -1,6 +1,7 @@
 using Assets._Project.Develop.Runtime.Utilities.DataManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using UnityEngine;
 
 
 namespace _Project.Develop.Runtime.Meta.Features.Stats
@@ -40,12 +41,16 @@ namespace _Project.Develop.Runtime.Meta.Features.Stats
 
 		public void ReadFrom (PlayerData data)
 		{
+			Debug.Log("Loaded Stats");
+
 			_wins.Value   = data.Wins;
 			_losses.Value = data.Losses;
 		}
 
 		public void WriteTo (PlayerData data)
 		{
+			Debug.Log("Saved Stats");
+
 			data.Wins   = _wins.Value;
 			data.Losses = _losses.Value;
 		}

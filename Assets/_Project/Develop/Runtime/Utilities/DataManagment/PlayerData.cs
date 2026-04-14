@@ -10,7 +10,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataManagment
         public Dictionary<CurrencyTypes, int> WalletData;
         public List<int> CompletedLevels;
 
-        public int  Wins;
+        public int Wins;
         public int Losses;
     }
 }

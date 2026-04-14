@@ -327,6 +327,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.CanRotate() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.MineDeploy.MineDeployRequest MineDeployRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MineDeploy.MineDeployRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> MineDeployRequest => MineDeployRequestC.Value;
+
+		public bool TryGetMineDeployRequest(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.MineDeploy.MineDeployRequest component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMineDeployRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MineDeploy.MineDeployRequest() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMineDeployRequest(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MineDeploy.MineDeployRequest() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.IsMainHero IsMainHeroC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.IsMainHero>();
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsMainHero()
@@ -610,6 +634,78 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBlastRadius(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.BlastRadius() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.WorldPointExplosionRequest WorldPointExplosionRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.WorldPointExplosionRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> WorldPointExplosionRequest => WorldPointExplosionRequestC.Value;
+
+		public bool TryGetWorldPointExplosionRequest(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.WorldPointExplosionRequest component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWorldPointExplosionRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.WorldPointExplosionRequest() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWorldPointExplosionRequest(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.WorldPointExplosionRequest() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.WorldPointExplosionEvent WorldPointExplosionEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.WorldPointExplosionEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> WorldPointExplosionEvent => WorldPointExplosionEventC.Value;
+
+		public bool TryGetWorldPointExplosionEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.WorldPointExplosionEvent component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWorldPointExplosionEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.WorldPointExplosionEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWorldPointExplosionEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.WorldPointExplosionEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.KamikazeExplosionRequest KamikazeExplosionRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.KamikazeExplosionRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent KamikazeExplosionRequest => KamikazeExplosionRequestC.Value;
+
+		public bool TryGetKamikazeExplosionRequest(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.KamikazeExplosionRequest component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddKamikazeExplosionRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.KamikazeExplosionRequest() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddKamikazeExplosionRequest(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Explosion.KamikazeExplosionRequest() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage BodyContactDamageC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage>();

@@ -1,4 +1,5 @@
 ﻿using _Project.Develop.Runtime.Configs.Gameplay.Entities;
+using _Project.Develop.Runtime.Gameplay.Features.Mines;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
@@ -8,12 +9,14 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Explosion;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
@@ -21,17 +24,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
     public class EntitiesFactory
     {
-        private readonly DIContainer _container;
-        private readonly EntitiesLifeContext _entitiesLifeContext;
+        private readonly DIContainer              _container;
+        private readonly EntitiesLifeContext      _entitiesLifeContext;
         private readonly CollidersRegistryService _collidersRegistryService;
-        private readonly MonoEntitiesFactory _monoEntitiesFactory;
+        private readonly MonoEntitiesFactory      _monoEntitiesFactory;
+        private readonly MainHeroHolderService    _mainHeroHolderService;
+        private readonly ConfigsProviderService   _configsProviderService;
 
         public EntitiesFactory(DIContainer container)
         {
-            _container = container;
-            _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
-            _monoEntitiesFactory = _container.Resolve<MonoEntitiesFactory>();
+            _container                = container;
+            _entitiesLifeContext      = _container.Resolve<EntitiesLifeContext>();
+            _monoEntitiesFactory      = _container.Resolve<MonoEntitiesFactory>();
             _collidersRegistryService = _container.Resolve<CollidersRegistryService>();
+            _mainHeroHolderService    = _container.Resolve<MainHeroHolderService>();
+            _configsProviderService   = _container.Resolve<ConfigsProviderService>();
         }
 
         public Entity CreateTower (Vector3 position, TowerConfig config)
@@ -45,6 +52,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddCurrentHealth(new ReactiveVariable<float>(config.Health))
                 .AddExplosionDamage(new ReactiveVariable<float>(config.Damage))
                 .AddBlastRadius(new ReactiveVariable<float>(config.Radius))
+                .AddWorldPointExplosionRequest()
+                .AddWorldPointExplosionEvent()
+                .AddMineDeployRequest()
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
                 .AddIsDead();
@@ -65,9 +75,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             entity.AddSystem(new ApplyDamageSystem())
                   .AddSystem(new DeathSystem())
                   .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
-                  .AddSystem(new PointAndClickExplosionSystem(
-                      _container.Resolve<IInputService>(),
-                      _container.Resolve<CollidersRegistryService>()));
+                  .AddSystem(new WorldPointExplosionSystem(_collidersRegistryService))
+                  .AddSystem(new MineDeploySystem(this, _configsProviderService.GetConfig<MineConfig>(), _entitiesLifeContext));
 
             return entity;
         }
@@ -81,7 +90,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             entity
                 .AddExplosionDamage(new ReactiveVariable<float>(config.Damage))
                 .AddBlastRadius(new ReactiveVariable<float>(config.Range))
-                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
                 .AddIsDead()
                 .AddMarkedForDeath();
 
@@ -97,7 +105,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             entity
                 .AddSystem(new DeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
-                .AddSystem(new StationaryExplosionSystem(_collidersRegistryService));
+                .AddSystem(new DisableCollidersOnDeathSystem())
+                .AddSystem(new CollisionExplosionSystem(_collidersRegistryService));
 
             return entity;
         }
@@ -117,9 +126,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddCurrentHealth(new ReactiveVariable<float>(config.Health))
                 .AddMaxHealth(new ReactiveVariable<float>(config.Health))
                 .AddIsDead()
-                .AddDisableCollidersOnDeath()
+                .AddMarkedForDeath()
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
+                .AddKamikazeExplosionRequest()
                 .AddExplosionDamage(new ReactiveVariable<float>(config.Damage))
                 .AddBlastRadius(new ReactiveVariable<float>(config.Range));
 
@@ -129,8 +139,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canRotate = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false));
 
-            ICompositeCondition mustDie = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
+            ICompositeCondition mustDie = new CompositeCondition(LogicOperations.Or)
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0))
+                .Add(new FuncCondition(() => entity.MarkedForDeath.Value));
 
             ICompositeCondition mustSelfRelease = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value));
@@ -147,6 +158,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity.AddSystem(new RigidbodyMovementSystem())
                   .AddSystem(new RigidbodyRotationSystem())
+                  .AddSystem(new KamikazeExplosionSystem(_collidersRegistryService))
                   .AddSystem(new DeathSystem())
                   .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
                   .AddSystem(new ApplyDamageSystem())

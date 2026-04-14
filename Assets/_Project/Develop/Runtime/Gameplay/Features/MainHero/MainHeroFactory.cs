@@ -33,6 +33,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             TowerConfig config = _configsProviderService.GetConfig<TowerConfig>();
 
             Entity entity = _entitiesFactory.CreateTower(position, config);
+            _brainsFactory.CreateTowerBrain(entity);
 
             entity
                 .AddIsMainHero()
