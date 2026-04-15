@@ -1,5 +1,5 @@
-﻿using _Project.Develop.Runtime.Meta.Features.Stats;
-using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+﻿using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Meta.Features.Stats;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;

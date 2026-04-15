@@ -4,7 +4,7 @@ using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
 
-namespace _Project.Develop.Runtime.Meta.Features.Stats
+namespace Assets._Project.Develop.Runtime.Meta.Features.Stats
 {
 	public class StatsService : IDataReader<PlayerData>, IDataWriter<PlayerData>
 	{

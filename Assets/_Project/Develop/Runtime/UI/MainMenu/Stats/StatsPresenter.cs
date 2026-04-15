@@ -1,6 +1,6 @@
 using System;
-using _Project.Develop.Runtime.Meta.Features.Stats;
 using _Project.Develop.Runtime.UI.CommonViews;
+using Assets._Project.Develop.Runtime.Meta.Features.Stats;
 using Assets._Project.Develop.Runtime.UI.Core;
 
 

@@ -1,9 +1,9 @@
-﻿using _Project.Develop.Runtime.Meta.Features.Stats;
-using _Project.Develop.Runtime.UI.CommonViews;
+﻿using _Project.Develop.Runtime.UI.CommonViews;
 using _Project.Develop.Runtime.UI.MainMenu.Stats;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
+using Assets._Project.Develop.Runtime.Meta.Features.Stats;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;

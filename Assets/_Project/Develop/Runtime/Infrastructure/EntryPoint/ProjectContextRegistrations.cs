@@ -17,7 +17,7 @@ using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 using Assets._Project.Develop.Runtime.Utilities.Timer;
 using System;
 using System.Collections.Generic;
-using _Project.Develop.Runtime.Meta.Features.Stats;
+using Assets._Project.Develop.Runtime.Meta.Features.Stats;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
