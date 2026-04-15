@@ -1,9 +1,13 @@
 ﻿using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Wallet;
-using System;
 using System.Collections.Generic;
 using _Project.Develop.Runtime.UI.MainMenu.Stats;
-using UnityEngine;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
+using Random = UnityEngine.Random;
+
 
 namespace Assets._Project.Develop.Runtime.UI.MainMenu
 {
@@ -12,6 +16,9 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         private readonly MainMenuScreenView _screen;
 
         private readonly ProjectPresentersFactory _projectPresentersFactory;
+				private readonly SceneSwitcherService _sceneSwitcherService;
+        private readonly ICoroutinesPerformer _coroutinePerformer;
+        private readonly LevelsListConfig _levelsListConfig;
 
         private readonly MainMenuPopupService _popupService;
 
@@ -20,11 +27,18 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         public MainMenuScreenPresenter(
             MainMenuScreenView screen,
             ProjectPresentersFactory projectPresentersFactory,
-            MainMenuPopupService popupService)
+            MainMenuPopupService popupService,
+            SceneSwitcherService sceneSwitcherService,
+            ICoroutinesPerformer coroutinePerformer,
+            LevelsListConfig levelsListConfig
+        )
         {
-            _screen = screen;
+            _screen                   = screen;
             _projectPresentersFactory = projectPresentersFactory;
-            _popupService = popupService;
+            _popupService             = popupService;
+            _sceneSwitcherService     = sceneSwitcherService;
+            _coroutinePerformer       = coroutinePerformer;
+            _levelsListConfig    = levelsListConfig;
         }
 
         public void Initialize()
@@ -64,7 +78,9 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
         private void OnOpenLevelsMenuButtonClicked()
         {
-            _popupService.OpenLevelsMenuPopup();
+            int levelNumber = Random.Range(0, _levelsListConfig.Levels.Count);
+
+            _coroutinePerformer.StartCoroutine(_sceneSwitcherService.ProcessSwitchTo(Scenes.Gameplay, new GameplayInputArgs(levelNumber)));
         }
     }
 }

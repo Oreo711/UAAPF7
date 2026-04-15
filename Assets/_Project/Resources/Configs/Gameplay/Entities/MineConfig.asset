@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08824a0d5e614873b5bfbf9f6bf664ce, type: 3}
   m_Name: MineConfig
   m_EditorClassIdentifier: 
-  _damage: 50
+  _damage: 100
   _range: 3
   _cost: 10

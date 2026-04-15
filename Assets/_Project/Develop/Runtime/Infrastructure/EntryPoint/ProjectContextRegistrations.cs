@@ -49,7 +49,7 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
 
             container.RegisterAsSingle(CreateTimerService);
 
-            container.RegisterAsSingle(CreateStatsService);
+            container.RegisterAsSingle(CreateStatsService).NonLazy();
 
             container.RegisterAsSingle<ISaveLoadSerivce>(CreateSaveLoadService);
 
